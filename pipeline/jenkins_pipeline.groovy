@@ -13,37 +13,34 @@ always-auth=true
 _auth=ZWljaGVyLXRlc3Q6YWxsaWFuem5leHVz
 """
 
-stage "git checkout" {
-  node {
-      // checkout the code to be build
-      checkout([$class: 'GitSCM', branches: [[name: '*/master']],
-                doGenerateSubmoduleConfigurations: false, extensions: [],
-                submoduleCfg: [], userRemoteConfigs: [[
-                  credentialsId: 'TU-access-token',
-                  url: 'https://github.com/jonaseicher/learnreact.git']]
-      ])
+stage "git checkout"
+node {
+    // checkout the code to be build
+    checkout([$class: 'GitSCM', branches: [[name: '*/master']],
+              doGenerateSubmoduleConfigurations: false, extensions: [],
+              submoduleCfg: [], userRemoteConfigs: [[
+                credentialsId: 'TU-access-token',
+                url: 'https://github.com/jonaseicher/learnreact.git']]
+    ])
 
-      writeFile(file: './.npmrc', text: npmrc, encoding: 'UTF-8')
-      // now stash the source code to be available in other nodes as well
-      stash includes: '**', name: 'source'
-  }
+    writeFile(file: './.npmrc', text: npmrc, encoding: 'UTF-8')
+    // now stash the source code to be available in other nodes as well
+    stash includes: '**', name: 'source'
 }
 
-stage "npm install" {
-  node {
-      // get hands on the stuff of previous steps
-      unstash 'source'
+stage "npm install"
+node {
+    // get hands on the stuff of previous steps
+    unstash 'source'
 
-      withNode {
-          sh "npm install"
-      }
-  }
+    withNode {
+        sh "npm install"
+    }
 }
 
-stage "npm publish to nexus" {
-  node {
-      withNode {
-          sh "npm publish"
-      }
-  }
+stage "npm publish to nexus"
+node {
+    withNode {
+        sh "npm publish"
+    }
 }
