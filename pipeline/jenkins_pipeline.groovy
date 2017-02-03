@@ -41,9 +41,7 @@ node {
 stage "npm publish to nexus"
 node {
     // get hands on the stuff of previous steps
-    unstash 'source'
-
-    //writeFile(file: './.npmrc', text: npmrc, encoding: 'UTF-8')
+//    unstash 'source'
 
     withNode {
         sh "npm publish"
